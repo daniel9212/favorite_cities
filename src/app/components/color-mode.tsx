@@ -2,8 +2,12 @@
 
 import type { IconButtonProps } from "@chakra-ui/react";
 import { ClientOnly, IconButton, Skeleton } from "@chakra-ui/react";
-import { ThemeProvider, useTheme } from "next-themes";
-import type { ThemeProviderProps } from "next-themes/dist/types";
+import {
+  type ThemeProviderProps,
+  ThemeProvider,
+  useTheme,
+}
+from "next-themes";
 import { forwardRef } from "react";
 import { LuMoon, LuSun } from "react-icons/lu";
 
@@ -35,11 +39,9 @@ export function ColorModeIcon() {
   return colorMode === "light" ? <LuSun /> : <LuMoon />;
 }
 
-interface ColorModeButtonProps extends Omit<IconButtonProps, "aria-label"> {}
-
 export const ColorModeButton = forwardRef<
   HTMLButtonElement,
-  ColorModeButtonProps
+  Omit<IconButtonProps, "aria-label">
 >(function ColorModeButton(props, ref) {
   const { toggleColorMode } = useColorMode();
   return (
