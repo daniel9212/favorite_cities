@@ -1,7 +1,7 @@
 import { Text } from '@chakra-ui/react';
 import Link from 'next/link';
 
-import { LinkButton } from '@/components/ui/link-button';
+import { LinkButton } from '@/app/components/link-button';
 
 interface UserActionSwitchProps {
   beforeMessage: string;
@@ -18,7 +18,7 @@ export default function UserActionSwitch({
     <Text textAlign="center" fontSize="0.75rem">
       {beforeMessage}
       <LinkButton
-        bg="white"
+        bg="transparent"
         fontSize="0.75rem"
         h="fit-content"
         color="blue.500"
