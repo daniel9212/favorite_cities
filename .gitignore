@@ -19,7 +19,6 @@
 
 # production
 /build
-/src/components/ui
 
 # misc
 .DS_Store
@@ -39,3 +38,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Chakra UI snippets
+/src/components/ui
+
+# VS Code
+/.vscode/
+
+# DB
+*.sql
+/db/

@@ -3,7 +3,7 @@ import { User } from './entities/User';
 
 export const sqliteConnection: DataSourceOptions = {
   type: 'sqlite',
-  database: 'favorite_cities_db',
+  database: 'db/favorite_cities',
   synchronize: true,
   logging: true,
   entities: [User],
