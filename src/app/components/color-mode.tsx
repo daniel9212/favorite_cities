@@ -1,15 +1,10 @@
-"use client";
+'use client';
 
-import type { IconButtonProps } from "@chakra-ui/react";
-import { ClientOnly, IconButton, Skeleton } from "@chakra-ui/react";
-import {
-  type ThemeProviderProps,
-  ThemeProvider,
-  useTheme,
-}
-from "next-themes";
-import { forwardRef } from "react";
-import { LuMoon, LuSun } from "react-icons/lu";
+import type { IconButtonProps } from '@chakra-ui/react';
+import { ClientOnly, IconButton, Skeleton } from '@chakra-ui/react';
+import { type ThemeProviderProps, ThemeProvider, useTheme } from 'next-themes';
+import { forwardRef } from 'react';
+import { LuMoon, LuSun } from 'react-icons/lu';
 
 export function ColorModeProvider(props: ThemeProviderProps) {
   return (
@@ -20,7 +15,7 @@ export function ColorModeProvider(props: ThemeProviderProps) {
 export function useColorMode() {
   const { resolvedTheme, setTheme } = useTheme();
   const toggleColorMode = () => {
-    setTheme(resolvedTheme === "light" ? "dark" : "light");
+    setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
   };
   return {
     colorMode: resolvedTheme,
@@ -31,32 +26,32 @@ export function useColorMode() {
 
 export function useColorModeValue<T>(light: T, dark: T) {
   const { colorMode } = useColorMode();
-  return colorMode === "light" ? light : dark;
+  return colorMode === 'light' ? light : dark;
 }
 
 export function ColorModeIcon() {
   const { colorMode } = useColorMode();
-  return colorMode === "light" ? <LuSun /> : <LuMoon />;
+  return colorMode === 'light' ? <LuSun /> : <LuMoon />;
 }
 
 export const ColorModeButton = forwardRef<
   HTMLButtonElement,
-  Omit<IconButtonProps, "aria-label">
+  Omit<IconButtonProps, 'aria-label'>
 >(function ColorModeButton(props, ref) {
   const { toggleColorMode } = useColorMode();
   return (
     <ClientOnly fallback={<Skeleton boxSize="8" />}>
       <IconButton
         onClick={toggleColorMode}
-        variant="ghost"
+        variant="plain"
         aria-label="Toggle color mode"
         size="sm"
         ref={ref}
         {...props}
         css={{
           _icon: {
-            width: "5",
-            height: "5",
+            width: '5',
+            height: '5',
           },
         }}
       >

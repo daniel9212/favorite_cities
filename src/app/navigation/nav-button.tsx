@@ -1,15 +1,20 @@
 import Link from 'next/link';
-import { Button } from '@chakra-ui/react';
+import { type ButtonProps, Button } from '@chakra-ui/react';
 
-interface NavButton {
+interface NavButton extends ButtonProps {
   text: string;
-  href: string;
+  href:
+    | string
+    | {
+        pathname: string;
+        query: Record<string, string>;
+      };
 }
 
-export default function NavButton({ text, href }: NavButton) {
+export default function NavButton({ text, href, ...buttonProps }: NavButton) {
   return (
     <Link href={href}>
-      <Button>{text}</Button>
+      <Button {...buttonProps}>{text}</Button>
     </Link>
   );
 }

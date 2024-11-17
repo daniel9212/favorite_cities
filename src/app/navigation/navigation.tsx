@@ -5,7 +5,16 @@ import NavButton from '@/app/navigation/nav-button';
 
 export default function Navigation() {
   return (
-    <HStack as="nav" px="10" w="full" position="fixed">
+    <HStack
+      bg="gray.300"
+      as="nav"
+      px="10"
+      py="2.5"
+      w="full"
+      gap="6"
+      position="fixed"
+      top="0"
+    >
       <Box mr="auto">Logo</Box>
       <NavButton text="Home" href="/" />
       <NavButton text="Search" href="/search" />
