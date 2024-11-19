@@ -3,11 +3,11 @@
 import type { LogInPayloadKeys } from '@/app/account/utils.ts';
 import { signIn } from '@root/auth';
 import { generateUserSchema } from '@/app/account/utils.ts';
+import appDataSourceInitialization from '@/app/db/connection';
 
 export const logIn = async (values: Record<LogInPayloadKeys, string>) => {
-  const { success } = generateUserSchema('login').safeParse(values);
+  generateUserSchema('login').parse(values);
 
-  if (success) {
-    await signIn('credentials', values);
-  }
+  await appDataSourceInitialization;
+  await signIn('credentials', values);
 };

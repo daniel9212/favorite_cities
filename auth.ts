@@ -4,7 +4,6 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 import { User } from '@/app/db/entities/User';
-import appDataSourceInitialization from '@/app/db/connection';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -13,13 +12,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: {},
         password: {},
       },
-      authorize: async ({ email, password }) => {
-        await appDataSourceInitialization;
 
+      authorize: async ({ email, password }) => {
         const user = await User.findOneBy({ email } as Record<
           LogInPayloadKeys,
           string
         >);
+
         if (!user) {
           // No user found, so this is their first attempt to login
           // Optionally, this is also the place you could do a user registration
@@ -38,4 +37,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async redirect() {
+      return '/';
+    },
+  },
 });

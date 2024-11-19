@@ -16,7 +16,7 @@ import {
   applyAppropriateActionByUserAction,
 } from '@/app/account/utils.ts';
 import { logIn } from '@/app/account/actions/logIn';
-import { signup } from '@/app/account/actions/signup';
+import { signUp } from '@/app/account/actions/signup';
 import UserActionSwitch from '@/app/account/[userAction]/user-action-switch';
 
 interface UserFormProps {
@@ -55,10 +55,16 @@ export default function UserForm({ params }: UserFormProps) {
       setErrors({});
     }
 
-    applyAppropriateAction(
-      logIn(formData as Record<LogInPayloadKeys, string>),
-      signup(formData as Record<SignUpPayloadKeys, string>),
-    );
+    try {
+      if (userAction === 'login') {
+        await logIn(formData as Record<LogInPayloadKeys, string>);
+      } else {
+        await signUp(formData as Record<SignUpPayloadKeys, string>);
+      }
+    } catch (error) {
+      // TODO: Add notification for displaying error
+      console.error(error);
+    }
   };
 
   return (
