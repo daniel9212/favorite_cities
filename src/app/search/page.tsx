@@ -60,8 +60,6 @@ export default function Search() {
     }
   };
 
-  console.log({ selectedCities });
-
   return (
     <Stack
       height="100vh"
@@ -88,7 +86,7 @@ export default function Search() {
                   colorPalette="cyan"
                   text="View"
                   href={{
-                    pathname: `/${name}`,
+                    pathname: `/cities/${name}_${country}`,
                     query: { latitude, longitude },
                   }}
                 />
