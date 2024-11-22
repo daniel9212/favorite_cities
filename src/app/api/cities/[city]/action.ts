@@ -11,6 +11,7 @@ interface CityWeatherResponse {
     | {
         current: Record<string, string | number>;
         current_units: Record<string, string>;
+        timezone: string;
       }
     | Record<string, never>;
   error: string | null;
@@ -28,6 +29,7 @@ export const getCityWeather = async (searchParams: SearchParamsProps) => {
         ...searchParams,
         current:
           'temperature_2m,wind_speed_10m,precipitation_probability,apparent_temperature,is_day',
+        timezone: 'auto',
       },
       withBaseURL: false,
     });

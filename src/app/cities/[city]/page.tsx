@@ -36,51 +36,61 @@ export default async function City({ params, searchParams }: CityProps) {
       precipitation_probability: precipitationUnit,
       wind_speed_10m: windSpeedUnit,
     },
+    timezone,
   } = data;
 
   return (
-    <Box
-      height="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Card.Root
-        minW="6/12"
-        variant="elevated"
+    <>
+      <Box width="9/12" m="auto" py="10">
+        <Text as="h1" fontWeight="bold" fontSize="4xl">
+          {decodeURI(city).replace('_', ', ')}
+        </Text>
+        <Text>
+          {new Date().toLocaleString([], {
+            timeZone: timezone,
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </Text>
+      </Box>
+      <Box
         bgImage={`url(${(is_day ? weatherDayBg : weatherNightBg).src})`}
         bgSize="cover"
       >
-        <Card.Header>
-          <Text as="h1" fontWeight="bold" fontSize="4xl">
-            {decodeURI(city).replace('_', ', ')}
-          </Text>
-          <Text>{new Date().toDateString()}</Text>
-        </Card.Header>
-        <Card.Body textAlign="center">
-          <Card.Title fontSize="3xl" pt="4" pb="10">
+        <Card.Root
+          width="9/12"
+          variant="subtle"
+          bg="transparent"
+          m="auto"
+          color="white"
+        >
+          <Card.Header textAlign="center" fontWeight="bold" fontSize="3xl">
             Weather Now
-          </Card.Title>
-          <HStack>
-            <Text w="full" fontSize="3xl" fontWeight="bold">
-              {`${Math.round(temperature_2m as number)} ${temperatureUnit}`}
+          </Card.Header>
+          <Card.Body textAlign="center">
+            <HStack>
+              <Text w="full" fontSize="3xl" fontWeight="bold">
+                {`${Math.round(temperature_2m as number)} ${temperatureUnit}`}
+              </Text>
+              <Box fontWeight="bold" w="full">
+                <Text>
+                  {`Wind speed: ${Math.round(wind_speed_10m as number)} ${windSpeedUnit}`}
+                </Text>
+                <Text>
+                  {`Precipitation: ${Math.round(precipitation_probability as number)} ${precipitationUnit}`}
+                </Text>
+              </Box>
+            </HStack>
+          </Card.Body>
+          <Card.Footer fontWeight="bold" textAlign="center">
+            <Text w="full">
+              {`Apparent Temperature: ${Math.round(apparent_temperature as number)} ${temperatureUnit}`}
             </Text>
-            <Box fontWeight="bold" w="full">
-              <Text>
-                {`Wind speed: ${Math.round(wind_speed_10m as number)} ${windSpeedUnit}`}
-              </Text>
-              <Text>
-                {`Precipitation: ${Math.round(precipitation_probability as number)} ${precipitationUnit}`}
-              </Text>
-            </Box>
-          </HStack>
-        </Card.Body>
-        <Card.Footer fontWeight="bold" textAlign="center">
-          <Text w="full">
-            {`Apparent Temperature: ${Math.round(apparent_temperature as number)} ${temperatureUnit}`}
-          </Text>
-        </Card.Footer>
-      </Card.Root>
-    </Box>
+          </Card.Footer>
+        </Card.Root>
+      </Box>
+    </>
   );
 }
