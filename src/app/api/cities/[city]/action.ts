@@ -33,6 +33,8 @@ export interface ToggleFavoriteCity extends SearchParamsProps {
   name: string;
 }
 
+// TODO: Check if TypeORM has a better way of dealing with relations
+// TODO: Add indexes on the latitude and longitude columns
 export const toggleFavoriteCity = async (
   userId: string,
   cityData: ToggleFavoriteCity,
@@ -46,30 +48,41 @@ export const toggleFavoriteCity = async (
   }
 
   const cityRepository = dataSource.getRepository(City);
-  const city = await findCity(cityRepository, { userId, ...cityData });
+  const city = await findCity(cityRepository, cityData);
 
   const userCityRelationQuery = createRelationQuery(dataSource, userId, {
     entity: User,
     relationField: 'favoriteCities',
   });
+
   if (city) {
     const { id: cityId, users } = city;
-    const shouldCityBeDeleted = !users.filter(({ id }) => id !== userId).length;
-    if (shouldCityBeDeleted) {
-      await cityRepository.remove(city);
+    const isUserOwningCity = !!users.find(({ id }) => id === userId);
+    const hasCityOtherOwners = !!users.filter(({ id }) => id !== userId).length;
+
+    if (isUserOwningCity) {
+      if (!hasCityOtherOwners) {
+        await cityRepository.remove(city);
+      } else {
+        const cityUserRelationQuery = createRelationQuery(dataSource, cityId, {
+          entity: City,
+          relationField: 'users',
+        });
+        await cityUserRelationQuery.remove(user);
+      }
+      // TODO: Check if this is needed
+      await userCityRelationQuery.remove(city);
+
+      return {
+        data: { isFavoriteCity: false },
+      };
     } else {
-      const cityUserRelationQuery = createRelationQuery(dataSource, cityId, {
-        entity: City,
-        relationField: 'users',
-      });
-      await cityUserRelationQuery.remove(user);
+      await userCityRelationQuery.add(city);
+
+      return {
+        data: { isFavoriteCity: true },
+      };
     }
-
-    await userCityRelationQuery.remove(city);
-
-    return {
-      data: { isFavoriteCity: false },
-    };
   }
 
   const newCity = cityRepository.create(cityData);
@@ -83,18 +96,11 @@ export const toggleFavoriteCity = async (
 
 const findCity = async (
   repository: Repository<City>,
-  {
-    userId,
-    latitude,
-    longitude,
-  }: {
-    userId: string;
-  } & CityCoordonates,
+  { latitude, longitude }: CityCoordonates,
 ) => {
   const city = await repository
     .createQueryBuilder('city')
     .innerJoinAndSelect('city.users', 'user')
-    .where('user.id = :userId', { userId })
     .andWhere('city.latitude = :latitude AND city.longitude = :longitude', {
       latitude,
       longitude,
