@@ -1,6 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { City } from '@/app/db/entities/City';
 
-@Entity({ name: 'users' })
+@Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -13,4 +21,8 @@ export class User extends BaseEntity {
 
   @Column({ type: 'varchar' })
   password!: string;
+
+  @ManyToMany(() => City, city => city.users, { cascade: true })
+  @JoinTable()
+  favoriteCities!: City[];
 }

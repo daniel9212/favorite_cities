@@ -56,8 +56,12 @@ export default function Search() {
                   colorPalette="cyan"
                   text="View"
                   href={{
-                    pathname: `/cities/${name}_${country}`,
-                    query: { latitude, longitude },
+                    pathname: `/cities/${name}`,
+                    query: {
+                      country,
+                      latitude,
+                      longitude,
+                    },
                   }}
                 />
               </Table.Cell>
