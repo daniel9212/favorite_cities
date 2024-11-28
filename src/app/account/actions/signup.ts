@@ -2,10 +2,10 @@
 
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
-import type { SignUpPayloadKeys } from '@/app/account/utils.ts';
+import type { SignUpPayloadKeys } from '@/app/account/utils';
 import appDataSourceInitialization from '@/app/db/connection';
 import { User } from '@/app/db/entities/User';
-import { generateUserSchema } from '@/app/account/utils.ts';
+import { generateUserSchema } from '@/app/account/utils';
 
 export const signUp = async (values: Record<SignUpPayloadKeys, string>) => {
   generateUserSchema('signup').parse(values);

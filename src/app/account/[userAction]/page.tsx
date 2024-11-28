@@ -14,7 +14,7 @@ import {
   signUpFields,
   generateUserSchema,
   applyAppropriateActionByUserAction,
-} from '@/app/account/utils.ts';
+} from '@/app/account/utils';
 import { logIn } from '@/app/account/actions/logIn';
 import { signUp } from '@/app/account/actions/signup';
 import UserActionSwitch from '@/app/account/[userAction]/user-action-switch';

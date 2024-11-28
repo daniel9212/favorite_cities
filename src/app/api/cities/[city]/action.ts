@@ -101,7 +101,7 @@ const findCity = async (
   const city = await repository
     .createQueryBuilder('city')
     .innerJoinAndSelect('city.users', 'user')
-    .andWhere('city.latitude = :latitude AND city.longitude = :longitude', {
+    .where('city.latitude = :latitude AND city.longitude = :longitude', {
       latitude,
       longitude,
     })

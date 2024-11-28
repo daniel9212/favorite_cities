@@ -1,4 +1,4 @@
-import type { LogInPayloadKeys } from '@/app/account/utils.ts';
+import type { LogInPayloadKeys } from '@/app/account/utils';
 import bcrypt from 'bcryptjs';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
