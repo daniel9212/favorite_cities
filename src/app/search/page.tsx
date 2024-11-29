@@ -32,7 +32,7 @@ export default function Search() {
 
   return (
     <Stack
-      height="100vh"
+      height="100%"
       display="flex"
       alignItems="center"
       justifyContent="center"
