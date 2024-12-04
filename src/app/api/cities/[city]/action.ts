@@ -1,15 +1,11 @@
 'use server';
 
 import type { DataSource, EntityTarget, Repository } from 'typeorm';
+import type { CityCoordonates } from '@/app/types/cities';
 import { request } from '@/app/api/base';
 import appDataSourceInitialization from '@/app/db/connection';
 import { City } from '@/app/db/entities/City';
 import { User } from '@/app/db/entities/User';
-
-interface CityCoordonates {
-  latitude: string;
-  longitude: string;
-}
 
 export interface SearchParamsProps extends CityCoordonates {
   country: string;
