@@ -1,6 +1,8 @@
 'use client';
 
-import { type City, getCities } from '@/app/search/action';
+import type { City } from '@/app/types/cities';
+
+import { getCities } from '@/app/search/action';
 import { type FormEvent, FormEventHandler, useState } from 'react';
 import { HStack, Input, Icon, Button, Table, Stack } from '@chakra-ui/react';
 import { IoSearch } from 'react-icons/io5';

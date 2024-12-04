@@ -1,17 +1,11 @@
+import type { City } from '@/app/types/cities';
+
 import { request } from '@/app/api/base';
 import { getErrorMessage } from '@/app/utils/error';
 
 interface CityResponse {
   data: City[];
   error: string | null;
-}
-
-export interface City {
-  id: number;
-  name: string;
-  country: string;
-  latitude: string;
-  longitude: string;
 }
 
 interface CityResults {
