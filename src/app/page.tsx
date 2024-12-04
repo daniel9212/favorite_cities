@@ -1,10 +1,10 @@
-import Link from 'next/link';
-import { Grid, GridItem, Stack, Card } from '@chakra-ui/react';
+import { Grid, GridItem, Card } from '@chakra-ui/react';
 import { redirect } from 'next/navigation';
 
 import { auth } from '@root/auth';
 import NavButton from '@/app/navigation/nav-button';
 import FavoriteCitiesCardBody from '@/app/favorites/favorite-cities-card-body';
+import Suggestions from '@/app/suggestions';
 import { getRandomCities } from '@/app/api/home/action';
 import { getFavoriteCities } from '@/app/api/favorites/action';
 
@@ -15,7 +15,7 @@ export default async function Home() {
     redirect('/account/login');
   }
 
-  const randomCities = await getRandomCities(5, 3);
+  const randomCities = await getRandomCities(4, 3);
 
   const {
     user: { id: userId },
@@ -57,27 +57,7 @@ export default async function Home() {
         justifyContent="center"
         colSpan={1}
       >
-        <Stack w="full">
-          {randomCities.map(({ id, name, country, latitude, longitude }) => (
-            <Card.Root key={id}>
-              <Link
-                href={{
-                  pathname: `/cities/${name}`,
-                  query: {
-                    country,
-                    latitude,
-                    longitude,
-                  },
-                }}
-              >
-                <Card.Body p="4" gap="2">
-                  <Card.Title>{name}</Card.Title>
-                  <Card.Description>{country}</Card.Description>
-                </Card.Body>
-              </Link>
-            </Card.Root>
-          ))}
-        </Stack>
+        <Suggestions randomCities={randomCities} />
       </GridItem>
     </Grid>
   );
