@@ -1,11 +1,15 @@
 import { Box, Card, HStack, Text } from '@chakra-ui/react';
+import { redirect } from 'next/navigation';
 
 import {
   type SearchParamsProps,
   getCityWeather,
+  checkIfFavoriteSelected,
 } from '@/app/api/cities/[city]/action';
 import weatherDayBg from '@/public/images/weather_day.jpg';
 import weatherNightBg from '@/public/images/weather_night.jpg';
+import { auth } from '@root/auth';
+import AddToFavoritesButton from '@/app/cities/add-to-favorites-button';
 
 interface CityProps {
   params: Promise<{
@@ -15,13 +19,30 @@ interface CityProps {
 }
 
 export default async function City({ params, searchParams }: CityProps) {
-  const { city } = await params;
+  const session = await auth();
 
-  const { data, error } = await getCityWeather(await searchParams);
-
-  if (error) {
-    return null;
+  if (!session) {
+    redirect('/account/login');
   }
+
+  const {
+    user: { id: userId },
+  } = session;
+  const { city } = await params;
+  const cityName = decodeURI(city);
+
+  const { country, ...coordinates } = await searchParams;
+
+  let isSelected = false;
+  try {
+    ({
+      data: { isSelected },
+    } = await checkIfFavoriteSelected({ userId, coordinates }));
+  } catch (error) {
+    console.error(error);
+  }
+
+  const { data } = await getCityWeather(coordinates);
 
   const {
     current: {
@@ -41,20 +62,31 @@ export default async function City({ params, searchParams }: CityProps) {
 
   return (
     <>
-      <Box width="9/12" m="auto" py="10">
-        <Text as="h1" fontWeight="bold" fontSize="4xl">
-          {decodeURI(city).replace('_', ', ')}
-        </Text>
-        <Text>
-          {new Date().toLocaleString([], {
-            timeZone: timezone,
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </Text>
-      </Box>
+      <HStack width="9/12" m="auto" py="10" justifyContent="space-between">
+        <Box>
+          <Text as="h1" fontWeight="bold" fontSize="4xl">
+            {`${cityName}, ${country}`}
+          </Text>
+          <Text>
+            {new Date().toLocaleString([], {
+              timeZone: timezone,
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </Text>
+        </Box>
+        <AddToFavoritesButton
+          defaultFavoriteSelected={isSelected}
+          userId={userId}
+          cityData={{
+            name: cityName,
+            country,
+            ...coordinates,
+          }}
+        />
+      </HStack>
       <Box
         bgImage={`url(${(is_day ? weatherDayBg : weatherNightBg).src})`}
         bgSize="cover"

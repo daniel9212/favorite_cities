@@ -5,12 +5,14 @@ import NavButton from '@/app/navigation/nav-button';
 
 export default function Navigation() {
   return (
-    <HStack bg="gray.300" as="nav" px="10" py="2.5" w="full" gap="6" top="0">
-      <Box mr="auto">Logo</Box>
-      <NavButton text="Home" href="/" />
-      <NavButton text="Search" href="/search" />
-      <NavButton text="Favorites" href="/favorites" />
-      <ColorModeButton />
-    </HStack>
+    <Box bg="gray.300">
+      <HStack as="nav" mx="auto" py="2.5" w="9/12" gap="6" top="0">
+        <Box mr="auto">Logo</Box>
+        <NavButton text="Home" href="/" />
+        <NavButton text="Search" href="/search" />
+        <NavButton text="Favorites" href="/favorites" />
+        <ColorModeButton />
+      </HStack>
+    </Box>
   );
 }

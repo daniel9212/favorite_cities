@@ -1,6 +1,8 @@
 'use client';
 
-import { type City, getCities } from '@/app/search/action';
+import type { City } from '@/app/types/cities';
+
+import { getCities } from '@/app/search/action';
 import { type FormEvent, FormEventHandler, useState } from 'react';
 import { HStack, Input, Icon, Button, Table, Stack } from '@chakra-ui/react';
 import { IoSearch } from 'react-icons/io5';
@@ -32,7 +34,7 @@ export default function Search() {
 
   return (
     <Stack
-      height="100vh"
+      height="100%"
       display="flex"
       alignItems="center"
       justifyContent="center"
@@ -56,8 +58,12 @@ export default function Search() {
                   colorPalette="cyan"
                   text="View"
                   href={{
-                    pathname: `/cities/${name}_${country}`,
-                    query: { latitude, longitude },
+                    pathname: `/cities/${name}`,
+                    query: {
+                      country,
+                      latitude,
+                      longitude,
+                    },
                   }}
                 />
               </Table.Cell>
