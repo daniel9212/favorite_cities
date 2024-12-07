@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import {
   type ToggleFavoriteCity,
-  toggleFavoriteCity,
+  addCityToFavorites,
+  removeCityFromFavorites,
 } from '@/app/api/cities/[city]/action';
 
 interface AddToFavoritesButtonProps {
@@ -20,6 +21,9 @@ export default function AddToFavoritesButton({
   const [isSelected, setSelected] = useState(defaultFavoriteSelected);
 
   const toggleFavoriteCityAction = async () => {
+    const toggleFavoriteCity = isSelected
+      ? removeCityFromFavorites
+      : addCityToFavorites;
     try {
       const {
         data: { isFavoriteCity },

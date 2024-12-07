@@ -31,20 +31,15 @@ export interface ToggleFavoriteCity extends SearchParamsProps {
 
 // TODO: Check if TypeORM has a better way of dealing with relations
 // TODO: Add indexes on the latitude and longitude columns
-export const toggleFavoriteCity = async (
+
+export const addCityToFavorites = async (
   userId: string,
   cityData: ToggleFavoriteCity,
 ) => {
   const dataSource = await appDataSourceInitialization;
 
-  const userRepository = dataSource.getRepository(User);
-  const user = await userRepository.findOneBy({ id: userId });
-  if (!user) {
-    throw new Error(`User with ID ${userId} not found!`);
-  }
-
   const cityRepository = dataSource.getRepository(City);
-  const city = await findCity(cityRepository, cityData);
+  const city = await findCityByCoords(cityData, cityRepository);
 
   const userCityRelationQuery = createRelationQuery(dataSource, userId, {
     entity: User,
@@ -52,47 +47,76 @@ export const toggleFavoriteCity = async (
   });
 
   if (city) {
-    const { id: cityId, users } = city;
+    const { users } = city;
     const isUserOwningCity = !!users.find(({ id }) => id === userId);
-    const hasCityOtherOwners = !!users.filter(({ id }) => id !== userId).length;
 
     if (isUserOwningCity) {
-      if (!hasCityOtherOwners) {
-        await cityRepository.remove(city);
-      } else {
-        const cityUserRelationQuery = createRelationQuery(dataSource, cityId, {
-          entity: City,
-          relationField: 'users',
-        });
-        await cityUserRelationQuery.remove(user);
-      }
-      // TODO: Check if this is needed
-      await userCityRelationQuery.remove(city);
-
-      return {
-        data: { isFavoriteCity: false },
-      };
-    } else {
-      await userCityRelationQuery.add(city);
-
-      return {
-        data: { isFavoriteCity: true },
-      };
+      throw new Error('City is already added to Favorites!');
     }
-  }
 
-  const newCity = cityRepository.create(cityData);
-  await cityRepository.save(newCity);
-  await userCityRelationQuery.add(newCity);
+    await userCityRelationQuery.add(city);
+  } else {
+    const newCity = cityRepository.create(cityData);
+    await cityRepository.save(newCity);
+    await userCityRelationQuery.add(newCity);
+  }
 
   return {
     data: { isFavoriteCity: true },
   };
 };
 
-const findCity = async (
-  repository: Repository<City>,
+export const removeCityFromFavorites = async (
+  userId: string,
+  cityData: ToggleFavoriteCity,
+) => {
+  const dataSource = await appDataSourceInitialization;
+  const user = await findUserById(userId, dataSource);
+
+  const cityRepository = dataSource.getRepository(City);
+  const city = await findCityByCoords(cityData, cityRepository);
+
+  if (!city) {
+    throw new Error('City not found!');
+  }
+
+  const { id: cityId, users } = city;
+  const isUserOwningCity = !!users.find(({ id }) => id === userId);
+
+  if (!isUserOwningCity) {
+    throw new Error('City not found for specific user!');
+  }
+
+  const hasCityOtherOwners = !!users.filter(({ id }) => id !== userId).length;
+
+  if (!hasCityOtherOwners) {
+    await cityRepository.remove(city);
+  } else {
+    const cityUserRelationQuery = createRelationQuery(dataSource, cityId, {
+      entity: City,
+      relationField: 'users',
+    });
+    await cityUserRelationQuery.remove(user);
+  }
+
+  return {
+    data: { isFavoriteCity: false },
+  };
+};
+
+const findUserById = async (id: string, dataSource: DataSource) => {
+  const userRepository = dataSource.getRepository(User);
+  const user = await userRepository.findOneBy({ id });
+  if (!user) {
+    throw new Error(`User not found!`);
+  }
+
+  return user;
+};
+
+const findCityByCoords = async (
   { latitude, longitude }: CityCoordonates,
+  repository: Repository<City>,
 ) => {
   const city = await repository
     .createQueryBuilder('city')
