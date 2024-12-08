@@ -4,8 +4,10 @@ import {
   Column,
   BaseEntity,
   ManyToMany,
+  OneToMany,
 } from 'typeorm';
-import { User } from '@/app/db/entities/User';
+import { User } from '@/app/db/entities/user';
+import { Review } from '@/app/db/entities/review';
 
 @Entity()
 export class City extends BaseEntity {
@@ -24,6 +26,9 @@ export class City extends BaseEntity {
   @Column({ type: 'varchar' })
   longitude!: string;
 
-  @ManyToMany(() => User, user => user.favoriteCities)
+  @ManyToMany('User', 'favoriteCities')
   users!: User[];
+
+  @OneToMany('Review', 'city')
+  reviews!: Review[];
 }
