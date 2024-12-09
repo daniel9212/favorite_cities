@@ -1,7 +1,8 @@
 'use server';
 
 import type { BaseEntity, DataSource, EntityTarget, Repository } from 'typeorm';
-import type { CityCoordonates } from '@/app/types/cities';
+import type { CityCoordonates, ClientCityType } from '@/app/types/city';
+import type { ReviewType } from '@/app/types/review';
 import { request } from '@/app/api/base';
 import appDataSourceInitialization from '@/app/db/connection';
 import { City } from '@/app/db/entities/city';
@@ -26,16 +27,12 @@ export const getCityWeather = async (searchParams: CityCoordonates) => {
   return { data };
 };
 
-export interface CityData extends SearchParamsProps {
-  name: string;
-}
-
 // TODO: Check if TypeORM has a better way of dealing with relations
 // TODO: Add indexes on the latitude and longitude columns
 
 export const addCityToFavorites = async (
   userId: string,
-  cityData: CityData,
+  cityData: ClientCityType,
 ) => {
   const dataSource = await appDataSourceInitialization;
 
@@ -69,7 +66,7 @@ export const addCityToFavorites = async (
 
 export const removeCityFromFavorites = async (
   userId: string,
-  cityData: CityData,
+  cityData: ClientCityType,
 ) => {
   const dataSource = await appDataSourceInitialization;
   const user = await findUserById(userId, dataSource);
@@ -173,15 +170,10 @@ export const checkIfFavoriteSelected = async ({
   };
 };
 
-export interface ReviewData {
-  id: string;
-  content: string;
-}
-
 export const createReview = async (
   userId: string,
-  cityData: CityData,
-  reviewData: ReviewData,
+  cityData: ClientCityType,
+  reviewData: ReviewType,
 ) => {
   const dataSource = await appDataSourceInitialization;
   const user = await findUserById(userId, dataSource);
@@ -202,20 +194,30 @@ export const createReview = async (
     city: city as City,
   });
 
-  const { id, createdAt, content } = await reviewRepository.save(newReview);
+  const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    id,
+    createdAt,
+    content,
+    user: { password, ...restUser },
+  } = await reviewRepository.save(newReview);
 
-  return { data: { id, createdAt, content } };
+  return {
+    data: { id, createdAt, content, user: restUser },
+  };
 };
 
-interface ReviewDataWithUser extends ReviewData {
+interface ReviewDataWithUser extends ReviewType {
   user: Omit<User, keyof BaseEntity>;
 }
 
-export interface ReviewWithSanitizedUser extends ReviewData {
+export interface ReviewWithSanitizedUser extends ReviewType {
   user: Omit<User, keyof BaseEntity | 'password'>;
 }
 
-export const fetchReviews = async (cityData: CityData) => {
+export const fetchReviews = async (
+  cityData: ClientCityType,
+): Promise<ReviewWithSanitizedUser[]> => {
   const dataSource = await appDataSourceInitialization;
 
   const { latitude, longitude } = cityData;

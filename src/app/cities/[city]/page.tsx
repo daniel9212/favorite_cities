@@ -3,13 +3,16 @@ import { redirect } from 'next/navigation';
 
 import {
   type SearchParamsProps,
+  type ReviewWithSanitizedUser,
   getCityWeather,
   checkIfFavoriteSelected,
+  fetchReviews,
 } from '@/app/api/cities/[city]/action';
 import weatherDayBg from '@/public/images/weather_day.jpg';
 import weatherNightBg from '@/public/images/weather_night.jpg';
 import { auth } from '@root/auth';
 import AddToFavoritesButton from '@/app/cities/add-to-favorites-button';
+import Reviews from '@/app/cities/[city]/reviews';
 
 interface CityProps {
   params: Promise<{
@@ -28,16 +31,30 @@ export default async function City({ params, searchParams }: CityProps) {
   const {
     user: { id: userId },
   } = session;
+
   const { city } = await params;
   const cityName = decodeURI(city);
 
   const { country, ...coordinates } = await searchParams;
+
+  const cityData = {
+    name: cityName,
+    country,
+    ...coordinates,
+  };
 
   let isSelected = false;
   try {
     ({
       data: { isSelected },
     } = await checkIfFavoriteSelected({ userId, coordinates }));
+  } catch (error) {
+    console.error(error);
+  }
+
+  let reviews = [] as ReviewWithSanitizedUser[];
+  try {
+    reviews = await fetchReviews(cityData);
   } catch (error) {
     console.error(error);
   }
@@ -60,12 +77,13 @@ export default async function City({ params, searchParams }: CityProps) {
     timezone,
   } = data;
 
+  const cityTitle = `${cityName}, ${country}`;
   return (
     <>
       <HStack width="9/12" m="auto" py="10" justifyContent="space-between">
         <Box>
           <Text as="h1" fontWeight="bold" fontSize="4xl">
-            {`${cityName}, ${country}`}
+            {cityTitle}
           </Text>
           <Text>
             {new Date().toLocaleString([], {
@@ -80,11 +98,7 @@ export default async function City({ params, searchParams }: CityProps) {
         <AddToFavoritesButton
           defaultFavoriteSelected={isSelected}
           userId={userId}
-          cityData={{
-            name: cityName,
-            country,
-            ...coordinates,
-          }}
+          cityData={cityData}
         />
       </HStack>
       <Box
@@ -122,6 +136,13 @@ export default async function City({ params, searchParams }: CityProps) {
             </Text>
           </Card.Footer>
         </Card.Root>
+      </Box>
+      <Box width="9/12" m="auto" mt="10">
+        <Reviews
+          user={session.user}
+          defaultReviews={reviews}
+          cityData={cityData}
+        />
       </Box>
     </>
   );

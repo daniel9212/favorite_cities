@@ -1,10 +1,10 @@
 import { Center, Card, Table } from '@chakra-ui/react';
 
-import type { City } from '@/app/types/cities';
+import type { CityType } from '@/app/types/city';
 import NavButton from '@/app/navigation/nav-button';
 
 interface FavoriteCitiesCardBodyProps {
-  favoriteCities: City[];
+  favoriteCities: CityType[];
 }
 
 export default function FavoriteCitiesCardBody({

@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { Button } from '@chakra-ui/react';
+import type { ClientCityType } from '@/app/types/city';
 import {
-  type CityData,
   addCityToFavorites,
   removeCityFromFavorites,
 } from '@/app/api/cities/[city]/action';
@@ -10,7 +10,7 @@ import {
 interface AddToFavoritesButtonProps {
   defaultFavoriteSelected: boolean;
   userId: string;
-  cityData: CityData;
+  cityData: ClientCityType;
 }
 
 export default function AddToFavoritesButton({
