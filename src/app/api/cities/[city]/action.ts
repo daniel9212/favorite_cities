@@ -195,10 +195,10 @@ export const createReview = async (
   });
 
   const {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     id,
     createdAt,
     content,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     user: { password, ...restUser },
   } = await reviewRepository.save(newReview);
 
@@ -232,4 +232,21 @@ export const fetchReviews = async (
     user: restUser,
     ...restReview,
   }));
+};
+
+export const deleteReview = async (reviewId: string) => {
+  const dataSource = await appDataSourceInitialization;
+  const reviewRepository = dataSource.getRepository(Review);
+  const review = await reviewRepository.findOneBy({ id: reviewId });
+
+  if (!review) {
+    throw new Error('Review cannot be deleted!');
+  }
+
+  await reviewRepository.remove(review);
+  return {
+    data: {
+      message: 'Review deleted successfully!',
+    },
+  };
 };
