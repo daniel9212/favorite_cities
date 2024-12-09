@@ -1,11 +1,13 @@
 'use server';
 
-import type { DataSource, EntityTarget, Repository } from 'typeorm';
-import type { CityCoordonates } from '@/app/types/cities';
+import type { BaseEntity, DataSource, EntityTarget, Repository } from 'typeorm';
+import type { CityCoordonates, ClientCityType } from '@/app/types/city';
+import type { ReviewType } from '@/app/types/review';
 import { request } from '@/app/api/base';
 import appDataSourceInitialization from '@/app/db/connection';
-import { City } from '@/app/db/entities/City';
-import { User } from '@/app/db/entities/User';
+import { City } from '@/app/db/entities/city';
+import { User } from '@/app/db/entities/user';
+import { Review } from '@/app/db/entities/review';
 
 export interface SearchParamsProps extends CityCoordonates {
   country: string;
@@ -25,16 +27,12 @@ export const getCityWeather = async (searchParams: CityCoordonates) => {
   return { data };
 };
 
-export interface ToggleFavoriteCity extends SearchParamsProps {
-  name: string;
-}
-
 // TODO: Check if TypeORM has a better way of dealing with relations
 // TODO: Add indexes on the latitude and longitude columns
 
 export const addCityToFavorites = async (
   userId: string,
-  cityData: ToggleFavoriteCity,
+  cityData: ClientCityType,
 ) => {
   const dataSource = await appDataSourceInitialization;
 
@@ -68,7 +66,7 @@ export const addCityToFavorites = async (
 
 export const removeCityFromFavorites = async (
   userId: string,
-  cityData: ToggleFavoriteCity,
+  cityData: ClientCityType,
 ) => {
   const dataSource = await appDataSourceInitialization;
   const user = await findUserById(userId, dataSource);
@@ -87,17 +85,11 @@ export const removeCityFromFavorites = async (
     throw new Error('City not found for specific user!');
   }
 
-  const hasCityOtherOwners = !!users.filter(({ id }) => id !== userId).length;
-
-  if (!hasCityOtherOwners) {
-    await cityRepository.remove(city);
-  } else {
-    const cityUserRelationQuery = createRelationQuery(dataSource, cityId, {
-      entity: City,
-      relationField: 'users',
-    });
-    await cityUserRelationQuery.remove(user);
-  }
+  const cityUserRelationQuery = createRelationQuery(dataSource, cityId, {
+    entity: City,
+    relationField: 'users',
+  });
+  await cityUserRelationQuery.remove(user);
 
   return {
     data: { isFavoriteCity: false },
@@ -175,5 +167,86 @@ export const checkIfFavoriteSelected = async ({
 
   return {
     data: { isSelected: false },
+  };
+};
+
+export const createReview = async (
+  userId: string,
+  cityData: ClientCityType,
+  reviewData: ReviewType,
+) => {
+  const dataSource = await appDataSourceInitialization;
+  const user = await findUserById(userId, dataSource);
+
+  const { latitude, longitude } = cityData;
+  const cityRepository = dataSource.getRepository(City);
+  let city = await cityRepository.findOneBy({ latitude, longitude });
+
+  if (!city) {
+    city = cityRepository.create(cityData);
+    await cityRepository.save(city);
+  }
+
+  const reviewRepository = dataSource.getRepository(Review);
+  const newReview = reviewRepository.create({
+    ...reviewData,
+    user: user as User,
+    city: city as City,
+  });
+
+  const {
+    id,
+    createdAt,
+    content,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    user: { password, ...restUser },
+  } = await reviewRepository.save(newReview);
+
+  return {
+    data: { id, createdAt, content, user: restUser },
+  };
+};
+
+interface ReviewDataWithUser extends ReviewType {
+  user: Omit<User, keyof BaseEntity>;
+}
+
+export interface ReviewWithSanitizedUser extends ReviewType {
+  user: Omit<User, keyof BaseEntity | 'password'>;
+}
+
+export const fetchReviews = async (
+  cityData: ClientCityType,
+): Promise<ReviewWithSanitizedUser[]> => {
+  const dataSource = await appDataSourceInitialization;
+
+  const { latitude, longitude } = cityData;
+  const reviews = (await dataSource.manager.find('Review', {
+    relations: ['user'],
+    where: { city: { latitude, longitude } },
+  })) as unknown as ReviewDataWithUser[];
+
+  // TODO: Find a better way to exclude password from response
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return reviews.map(({ user: { password, ...restUser }, ...restReview }) => ({
+    user: restUser,
+    ...restReview,
+  }));
+};
+
+export const deleteReview = async (reviewId: string) => {
+  const dataSource = await appDataSourceInitialization;
+  const reviewRepository = dataSource.getRepository(Review);
+  const review = await reviewRepository.findOneBy({ id: reviewId });
+
+  if (!review) {
+    throw new Error('Review cannot be deleted!');
+  }
+
+  await reviewRepository.remove(review);
+  return {
+    data: {
+      message: 'Review deleted successfully!',
+    },
   };
 };

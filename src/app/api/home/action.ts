@@ -1,4 +1,4 @@
-import type { City } from '@/app/types/cities';
+import type { CityType } from '@/app/types/city';
 
 import { request } from '@/app/api/base';
 
@@ -43,7 +43,7 @@ const generateSearchTerm = (searchTermLen: number) => {
 };
 
 const generateCityDistribution = (
-  cityLists: City[][],
+  cityLists: CityType[][],
   numberOfCities: number,
 ) => {
   const nonEmptyCityLists = cityLists.filter(list => list.length !== 0);

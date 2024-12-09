@@ -30,7 +30,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/db/entities/User.ts"
+    "src/app/db/entities/user.ts"
   ],
   "exclude": ["node_modules"]
 }

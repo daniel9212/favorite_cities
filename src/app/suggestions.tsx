@@ -1,6 +1,6 @@
 'use client';
 
-import type { City } from '@/app/types/cities';
+import type { CityType } from '@/app/types/city';
 import type { SetStateAction, Dispatch, MutableRefObject } from 'react';
 
 import { useState, useEffect, useRef } from 'react';
@@ -10,11 +10,11 @@ import { Stack, Card } from '@chakra-ui/react';
 import { request } from '@/app/api/base';
 
 interface SuggestionsProps {
-  randomCities: City[];
+  randomCities: CityType[];
 }
 
 export default function Suggestions({ randomCities }: SuggestionsProps) {
-  const [suggestions, setSuggestions] = useState<City[]>(randomCities);
+  const [suggestions, setSuggestions] = useState<CityType[]>(randomCities);
 
   const isLocationFetchedRef = useRef(
     !!suggestions.find(({ id }) => id === 'current-location'),
@@ -83,9 +83,9 @@ const fetchIpinfoData = () => request('/api/home/ipinfo');
 const createGeolocationCbFromState =
   (
     isLocationFetchedRef: MutableRefObject<boolean>,
-    setSuggestions: Dispatch<SetStateAction<City[]>>,
+    setSuggestions: Dispatch<SetStateAction<CityType[]>>,
   ) =>
-  <T,>(fetchData: (arg: T) => Promise<{ data: City }>) =>
+  <T,>(fetchData: (arg: T) => Promise<{ data: CityType }>) =>
   async (arg: Parameters<typeof fetchData>[0]) => {
     if (isLocationFetchedRef.current) {
       return;

@@ -1,16 +1,16 @@
-import type { City } from '@/app/types/cities';
+import type { CityType } from '@/app/types/city';
 
 import { request } from '@/app/api/base';
 import { getErrorMessage } from '@/app/utils/error';
 
 interface CityResponse {
-  data: City[];
+  data: CityType[];
   error: string | null;
 }
 
 interface CityResults {
   data: {
-    results: City[];
+    results: CityType[];
   };
 }
 

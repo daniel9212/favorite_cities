@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
 import type { SignUpPayloadKeys } from '@/app/account/utils';
 import appDataSourceInitialization from '@/app/db/connection';
-import { User } from '@/app/db/entities/User';
+import { User } from '@/app/db/entities/user';
 import { generateUserSchema } from '@/app/account/utils';
 
 export const signUp = async (values: Record<SignUpPayloadKeys, string>) => {

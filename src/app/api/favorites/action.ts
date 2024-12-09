@@ -1,5 +1,5 @@
 import appDataSourceInitialization from '@/app/db/connection';
-import { City } from '@/app/db/entities/City';
+import { City } from '@/app/db/entities/city';
 
 export const getFavoriteCities = async (
   userId: string,

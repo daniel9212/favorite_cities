@@ -5,8 +5,10 @@ import {
   BaseEntity,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
-import { City } from '@/app/db/entities/City';
+import { City } from '@/app/db/entities/city';
+import { Review } from '@/app/db/entities/review';
 
 @Entity()
 export class User extends BaseEntity {
@@ -22,7 +24,10 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar' })
   password!: string;
 
-  @ManyToMany(() => City, city => city.users, { cascade: true })
+  @ManyToMany('City', 'users', { cascade: true })
   @JoinTable()
   favoriteCities!: City[];
+
+  @OneToMany('Review', 'users')
+  reviews!: Review[];
 }

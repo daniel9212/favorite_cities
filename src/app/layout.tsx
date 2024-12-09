@@ -34,7 +34,7 @@ export default function RootLayout({
         <Provider>
           <Stack h="full" display="flex">
             <Navigation />
-            <Container p="0" flex="1">
+            <Container maxW="full" p="0" flex="1">
               {children}
             </Container>
           </Stack>

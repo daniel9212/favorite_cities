@@ -1,6 +1,6 @@
 'use client';
 
-import type { City } from '@/app/types/cities';
+import type { CityType } from '@/app/types/city';
 
 import { getCities } from '@/app/search/action';
 import { type FormEvent, FormEventHandler, useState } from 'react';
@@ -9,7 +9,7 @@ import { IoSearch } from 'react-icons/io5';
 import NavButton from '@/app/navigation/nav-button';
 
 export default function Search() {
-  const [selectedCities, setSelectedCities] = useState<City[]>([]);
+  const [selectedCities, setSelectedCities] = useState<CityType[]>([]);
 
   const onCitiesSearch = async (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
