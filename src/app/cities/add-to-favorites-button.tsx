@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import {
-  type ToggleFavoriteCity,
+  type CityData,
   addCityToFavorites,
   removeCityFromFavorites,
 } from '@/app/api/cities/[city]/action';
@@ -10,7 +10,7 @@ import {
 interface AddToFavoritesButtonProps {
   defaultFavoriteSelected: boolean;
   userId: string;
-  cityData: ToggleFavoriteCity;
+  cityData: CityData;
 }
 
 export default function AddToFavoritesButton({
