@@ -1,5 +1,7 @@
 import { Box, HStack } from '@chakra-ui/react';
 
+import LogOutButton from '@/app/navigation/logout-button';
+
 import { ColorModeButton } from '@/app/components/color-mode';
 import NavButton from '@/app/navigation/nav-button';
 
@@ -11,6 +13,7 @@ export default function Navigation() {
         <NavButton text="Home" href="/" />
         <NavButton text="Search" href="/search" />
         <NavButton text="Favorites" href="/favorites" />
+        <LogOutButton />
         <ColorModeButton />
       </HStack>
     </Box>
