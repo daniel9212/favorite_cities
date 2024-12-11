@@ -1,15 +1,24 @@
 import { Center, Card, Table } from '@chakra-ui/react';
 
-import type { CityType } from '@/app/types/city';
 import NavButton from '@/app/navigation/nav-button';
+import { getFavoriteCities } from '@/app/api/favorites/action';
 
 interface FavoriteCitiesCardBodyProps {
-  favoriteCities: CityType[];
+  userId: string;
+  queryOptions?: {
+    limit: number;
+    orderBy: string;
+  };
 }
 
-export default function FavoriteCitiesCardBody({
-  favoriteCities,
+export default async function FavoriteCitiesCardBody({
+  userId,
+  queryOptions,
 }: FavoriteCitiesCardBodyProps) {
+  const {
+    data: { favoriteCities },
+  } = await getFavoriteCities(userId, queryOptions);
+
   const hasFavoriteCities = !!favoriteCities.length;
   return (
     <Card.Body px="0" py="0" overflow="auto">

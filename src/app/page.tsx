@@ -1,32 +1,14 @@
 import { Grid, GridItem, Card } from '@chakra-ui/react';
-import { redirect } from 'next/navigation';
 
 import { auth } from '@root/auth';
 import NavButton from '@/app/navigation/nav-button';
 import FavoriteCitiesCardBody from '@/app/favorites/favorite-cities-card-body';
 import Suggestions from '@/app/suggestions';
-import { getRandomCities } from '@/app/api/home/action';
-import { getFavoriteCities } from '@/app/api/favorites/action';
 
 export default async function Home() {
   const session = await auth();
 
-  if (!session) {
-    redirect('/account/login');
-  }
-
-  const randomCities = await getRandomCities(4, 3);
-
-  const {
-    user: { id: userId },
-  } = session;
-
-  const {
-    data: { favoriteCities },
-  } = await getFavoriteCities(userId, {
-    limit: 5,
-    orderBy: 'RANDOM()',
-  });
+  const { user: { id: userId } = {} } = session ?? {};
 
   return (
     <Grid h="full" templateColumns="repeat(4, 1fr)" gap="6">
@@ -38,11 +20,18 @@ export default async function Home() {
         flexDirection="column"
         colSpan={2}
       >
-        <Card.Root w="full" h="23.5rem" p="6" variant="subtle">
-          <FavoriteCitiesCardBody favoriteCities={favoriteCities} />
-        </Card.Root>
+        {userId && (
+          <Card.Root w="full" mb="28" h="23.5rem" p="6" variant="subtle">
+            <FavoriteCitiesCardBody
+              userId={userId}
+              queryOptions={{
+                limit: 5,
+                orderBy: 'RANDOM()',
+              }}
+            />
+          </Card.Root>
+        )}
         <NavButton
-          mt="28"
           fontSize="lg"
           fontWeight="bold"
           p="6"
@@ -57,7 +46,7 @@ export default async function Home() {
         justifyContent="center"
         colSpan={1}
       >
-        <Suggestions randomCities={randomCities} />
+        <Suggestions />
       </GridItem>
     </Grid>
   );

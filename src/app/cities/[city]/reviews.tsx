@@ -11,8 +11,8 @@ import {
 } from '@/app/api/cities/[city]/action';
 import ReviewDialog from '@/app/cities/[city]/review-dialog';
 
-interface ReviewsProps {
-  user: SessionUser;
+export interface ReviewsProps {
+  user?: SessionUser;
   defaultReviews: ReviewWithSanitizedUser[];
   cityData: ClientCityType;
 }
@@ -25,7 +25,7 @@ export default function Reviews({
   const [reviews, setReviews] =
     useState<ReviewWithSanitizedUser[]>(defaultReviews);
 
-  const { id: currentUserId } = user;
+  const { id: currentUserId } = user ?? {};
 
   const createDeleteReviewHandler = (reviewId: string) => async () => {
     try {
@@ -41,9 +41,15 @@ export default function Reviews({
   // TODO: Fix reviews layout
   return (
     <>
-      <Center mb="10">
-        <ReviewDialog cityData={cityData} user={user} setReviews={setReviews} />
-      </Center>
+      {user && (
+        <Center mb="10">
+          <ReviewDialog
+            cityData={cityData}
+            user={user}
+            setReviews={setReviews}
+          />
+        </Center>
+      )}
       <Stack>
         {reviews.map(({ id, content, user: { name, id: userId } }) => {
           const isCurrentUserOwner = currentUserId === userId;
