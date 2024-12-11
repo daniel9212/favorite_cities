@@ -1,6 +1,6 @@
 'use client';
 
-import type { SetStateAction, Dispatch, MutableRefObject } from 'react';
+import type { SetStateAction, Dispatch, RefObject } from 'react';
 import { useState, useEffect, useRef } from 'react';
 
 import type { CityType } from '@/app/types/city';
@@ -56,7 +56,7 @@ const fetchIpinfoData = () => request('/api/home/ipinfo');
 
 const createGeolocationCbFromState =
   (
-    isLocationFetchedRef: MutableRefObject<boolean>,
+    isLocationFetchedRef: RefObject<boolean>,
     setLocationData: Dispatch<SetStateAction<CityType>>,
   ) =>
   <T,>(fetchData: (arg: T) => Promise<{ data: CityType }>) =>
