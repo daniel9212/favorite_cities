@@ -18,6 +18,7 @@ import {
 import { logIn } from '@/app/account/actions/logIn';
 import { signUp } from '@/app/account/actions/signup';
 import UserActionSwitch from '@/app/account/[userAction]/user-action-switch';
+import { getErrorMessage } from '@/app/utils/error';
 
 interface UserFormProps {
   params: Promise<{
@@ -26,11 +27,12 @@ interface UserFormProps {
 }
 
 type formFieldKeys = LogInPayloadKeys | SignUpPayloadKeys;
+type errorFieldKeys = formFieldKeys | 'server';
 
 export default function UserForm({ params }: UserFormProps) {
   const { userAction } = use(params);
   const [errors, setErrors] = useState<
-    Record<formFieldKeys, string[]> | Record<string, never[]>
+    Record<errorFieldKeys, string[]> | Record<string, never[]>
   >({});
 
   // TODO: Redirect if userAction is different from "login" or "signup"
@@ -46,7 +48,9 @@ export default function UserForm({ params }: UserFormProps) {
       generateUserSchema(userAction).safeParse(formData);
 
     if (!success) {
-      setErrors(error.flatten().fieldErrors as Record<formFieldKeys, string[]>);
+      setErrors(
+        error.flatten().fieldErrors as Record<errorFieldKeys, string[]>,
+      );
       return;
     }
 
@@ -62,8 +66,13 @@ export default function UserForm({ params }: UserFormProps) {
         await signUp(formData as Record<SignUpPayloadKeys, string>);
       }
     } catch (error) {
-      // TODO: Add notification for displaying error
-      console.error(error);
+      setErrors(
+        prevErrors =>
+          ({
+            ...prevErrors,
+            server: [getErrorMessage(error)],
+          }) as Record<errorFieldKeys, string[]>,
+      );
     }
   };
 
@@ -106,6 +115,9 @@ export default function UserForm({ params }: UserFormProps) {
                 </Field>
               );
             },
+          )}
+          {errors.server && (
+            <Field key="server" errorText={errors.server[0]} invalid />
           )}
         </Stack>
       </Card.Body>
