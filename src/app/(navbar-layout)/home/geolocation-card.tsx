@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 
 import type { CityType } from '@/app/types/city';
 import { request } from '@/app/api/base';
-import SuggestionCard from '@/app/suggestion-card';
+import SuggestionCard from '@/app/(navbar-layout)/home/suggestion-card';
 
 export default function GeolocationCard() {
   const [locationData, setLocationData] = useState<CityType>(null!);

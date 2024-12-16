@@ -1,6 +1,6 @@
 import { Center, Card } from '@chakra-ui/react';
 
-import FavoriteCitiesCardBody from '@/app/favorites/favorite-cities-card-body';
+import FavoriteCitiesCardBody from '@/app/(navbar-layout)/favorites/favorite-cities-card-body';
 import { auth } from '@root/auth';
 import { redirect } from 'next/navigation';
 

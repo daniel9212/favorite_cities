@@ -5,9 +5,9 @@ import {
   getCityWeather,
 } from '@/app/api/cities/[city]/action';
 import { auth } from '@root/auth';
-import Header from '@/app/cities/[city]/header';
-import ReviewsSC from '@/app/cities/[city]/reviews-sc';
-import WeatherCard from '@/app/cities/[city]/weather-card';
+import Header from '@/app/(navbar-layout)/cities/[city]/header';
+import ReviewsSC from '@/app/(navbar-layout)/cities/[city]/reviews-sc';
+import WeatherCard from '@/app/(navbar-layout)/cities/[city]/weather-card';
 
 interface CityProps {
   params: Promise<{

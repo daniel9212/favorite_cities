@@ -2,7 +2,7 @@
 
 import type { CityType } from '@/app/types/city';
 
-import { getCities } from '@/app/search/action';
+import { getCities } from '@/app/(navbar-layout)/search/action';
 import { type FormEvent, FormEventHandler, useState } from 'react';
 import { HStack, Input, Icon, Button, Table, Stack } from '@chakra-ui/react';
 import { IoSearch } from 'react-icons/io5';

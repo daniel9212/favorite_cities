@@ -2,8 +2,8 @@ import type { CityType } from '@/app/types/city';
 import { Stack } from '@chakra-ui/react';
 import { getRandomCities } from '@/app/api/home/action';
 
-import SuggestionCard from '@/app/suggestion-card';
-import GeolocationCard from '@/app/geolocation-card';
+import SuggestionCard from '@/app/(navbar-layout)/home/suggestion-card';
+import GeolocationCard from '@/app/(navbar-layout)/home/geolocation-card';
 
 export default async function Suggestions() {
   let randomCities = [] as CityType[];

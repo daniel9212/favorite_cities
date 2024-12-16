@@ -2,7 +2,7 @@ import { Box, HStack, Text } from '@chakra-ui/react';
 
 import type { ClientCityType } from '@/app/types/city';
 import { checkIfFavoriteSelected } from '@/app/api/cities/[city]/action';
-import AddToFavoritesButton from '@/app/cities/add-to-favorites-button';
+import AddToFavoritesButton from '@/app/(navbar-layout)/cities/add-to-favorites-button';
 
 interface HeaderProps {
   userId?: string;

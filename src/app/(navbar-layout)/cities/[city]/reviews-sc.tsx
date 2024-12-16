@@ -1,10 +1,10 @@
-import type { ReviewsProps } from '@/app/cities/[city]/reviews';
+import type { ReviewsProps } from '@/app/(navbar-layout)/cities/[city]/reviews';
 
 import {
   type ReviewWithSanitizedUser,
   fetchReviews,
 } from '@/app/api/cities/[city]/action';
-import Reviews from '@/app/cities/[city]/reviews';
+import Reviews from '@/app/(navbar-layout)/cities/[city]/reviews';
 
 export default async function ReviewsSC({
   cityData,
