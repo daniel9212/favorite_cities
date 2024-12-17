@@ -3,6 +3,7 @@
 import { use } from 'react';
 import { type FormEvent, type FormEventHandler, useState } from 'react';
 import { Button, Card, Input, Stack } from '@chakra-ui/react';
+import { redirect } from 'next/navigation';
 
 import { Field } from '@/app/components/field';
 import { PasswordInput } from '@/app/components/password-input';
@@ -18,6 +19,9 @@ import {
 import { logIn } from '@/app/account/actions/logIn';
 import { signUp } from '@/app/account/actions/signup';
 import UserActionSwitch from '@/app/account/[userAction]/user-action-switch';
+import { getServerErrorMessage } from '@/app/utils/error';
+
+const ALLOWED_ACTIONS = ['login', 'signup'];
 
 interface UserFormProps {
   params: Promise<{
@@ -26,14 +30,17 @@ interface UserFormProps {
 }
 
 type formFieldKeys = LogInPayloadKeys | SignUpPayloadKeys;
+type errorFieldKeys = formFieldKeys | 'server';
 
 export default function UserForm({ params }: UserFormProps) {
   const { userAction } = use(params);
   const [errors, setErrors] = useState<
-    Record<formFieldKeys, string[]> | Record<string, never[]>
+    Record<errorFieldKeys, string[]> | Record<string, never[]>
   >({});
 
-  // TODO: Redirect if userAction is different from "login" or "signup"
+  if (!ALLOWED_ACTIONS.includes(userAction)) {
+    redirect('/account/login');
+  }
 
   const applyAppropriateAction = applyAppropriateActionByUserAction(userAction);
 
@@ -46,7 +53,9 @@ export default function UserForm({ params }: UserFormProps) {
       generateUserSchema(userAction).safeParse(formData);
 
     if (!success) {
-      setErrors(error.flatten().fieldErrors as Record<formFieldKeys, string[]>);
+      setErrors(
+        error.flatten().fieldErrors as Record<errorFieldKeys, string[]>,
+      );
       return;
     }
 
@@ -62,8 +71,13 @@ export default function UserForm({ params }: UserFormProps) {
         await signUp(formData as Record<SignUpPayloadKeys, string>);
       }
     } catch (error) {
-      // TODO: Add notification for displaying error
-      console.error(error);
+      setErrors(
+        prevErrors =>
+          ({
+            ...prevErrors,
+            server: [getServerErrorMessage(error)],
+          }) as Record<errorFieldKeys, string[]>,
+      );
     }
   };
 
@@ -106,6 +120,9 @@ export default function UserForm({ params }: UserFormProps) {
                 </Field>
               );
             },
+          )}
+          {errors.server && (
+            <Field key="server" errorText={errors.server[0]} invalid />
           )}
         </Stack>
       </Card.Body>

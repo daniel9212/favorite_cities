@@ -2,8 +2,16 @@ import type { LogInPayloadKeys } from '@/app/account/utils';
 import bcrypt from 'bcryptjs';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import { CredentialsSignin } from 'next-auth';
 
 import { User } from '@/app/db/entities/user';
+
+class InvalidLoginError extends CredentialsSignin {
+  constructor(message: string) {
+    super(message);
+    this.message = message;
+  }
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -14,26 +22,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
 
       authorize: async ({ email, password }) => {
+        const invalidCredentialsError = new InvalidLoginError(
+          'Invalid Email or Password.',
+        );
         const user = await User.findOneBy({ email } as Record<
           LogInPayloadKeys,
           string
         >);
 
         if (!user) {
-          // No user found, so this is their first attempt to login
-          // Optionally, this is also the place you could do a user registration
-          throw new Error('Invalid credentials.');
+          throw invalidCredentialsError;
         }
 
         const passwordsMatch = await bcrypt.compare(
           password as string,
           user.password,
         );
-        if (passwordsMatch) {
-          return user;
+
+        if (!passwordsMatch) {
+          throw invalidCredentialsError;
         }
 
-        return null;
+        return user;
       },
     }),
   ],

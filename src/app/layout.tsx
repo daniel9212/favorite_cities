@@ -1,9 +1,7 @@
-import { Container, Stack } from '@chakra-ui/react';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { Provider } from '@/app/components/provider';
-import Navigation from '@/app/navigation/navigation';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -31,14 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider>
-          <Stack h="full" display="flex">
-            <Navigation />
-            <Container maxW="full" p="0" flex="1">
-              {children}
-            </Container>
-          </Stack>
-        </Provider>
+        <Provider>{children}</Provider>
       </body>
     </html>
   );

@@ -33,14 +33,16 @@ export const signUpFields = [
 
 export type UserAction = 'login' | 'signup';
 
+const MIN_PASSWORD_LEN = 5;
 const REQUIRED_ERROR = { message: 'This field is required!' };
 
 const logInValidation = {
-  email: zod
+  email: zod.string().min(1, REQUIRED_ERROR).email('Email must be valid!'),
+  password: zod
     .string()
-    .min(1, REQUIRED_ERROR)
-    .email('This should be a valid e-mail!'),
-  password: zod.string().min(1, REQUIRED_ERROR),
+    .min(MIN_PASSWORD_LEN, {
+      message: `Password must be at least ${MIN_PASSWORD_LEN} characters long!`,
+    }),
 };
 
 export type LogInPayloadKeys = keyof typeof logInValidation;

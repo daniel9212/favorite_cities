@@ -9,7 +9,7 @@ import {
   type ReviewWithSanitizedUser,
   deleteReview,
 } from '@/app/api/cities/[city]/action';
-import ReviewDialog from '@/app/cities/[city]/review-dialog';
+import ReviewDialog from '@/app/(navbar-layout)/cities/[city]/review-dialog';
 
 export interface ReviewsProps {
   user?: SessionUser;
