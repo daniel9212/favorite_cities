@@ -18,7 +18,7 @@ import {
 import { logIn } from '@/app/account/actions/logIn';
 import { signUp } from '@/app/account/actions/signup';
 import UserActionSwitch from '@/app/account/[userAction]/user-action-switch';
-import { getErrorMessage } from '@/app/utils/error';
+import { getServerErrorMessage } from '@/app/utils/error';
 
 interface UserFormProps {
   params: Promise<{
@@ -70,7 +70,7 @@ export default function UserForm({ params }: UserFormProps) {
         prevErrors =>
           ({
             ...prevErrors,
-            server: [getErrorMessage(error)],
+            server: [getServerErrorMessage(error)],
           }) as Record<errorFieldKeys, string[]>,
       );
     }
