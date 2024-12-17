@@ -3,6 +3,7 @@
 import { use } from 'react';
 import { type FormEvent, type FormEventHandler, useState } from 'react';
 import { Button, Card, Input, Stack } from '@chakra-ui/react';
+import { redirect } from 'next/navigation';
 
 import { Field } from '@/app/components/field';
 import { PasswordInput } from '@/app/components/password-input';
@@ -20,6 +21,8 @@ import { signUp } from '@/app/account/actions/signup';
 import UserActionSwitch from '@/app/account/[userAction]/user-action-switch';
 import { getServerErrorMessage } from '@/app/utils/error';
 
+const ALLOWED_ACTIONS = ['login', 'signup'];
+
 interface UserFormProps {
   params: Promise<{
     userAction: UserAction;
@@ -35,7 +38,9 @@ export default function UserForm({ params }: UserFormProps) {
     Record<errorFieldKeys, string[]> | Record<string, never[]>
   >({});
 
-  // TODO: Redirect if userAction is different from "login" or "signup"
+  if (!ALLOWED_ACTIONS.includes(userAction)) {
+    redirect('/account/login');
+  }
 
   const applyAppropriateAction = applyAppropriateActionByUserAction(userAction);
 
