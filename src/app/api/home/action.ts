@@ -72,6 +72,7 @@ export const getRandomCities = async (
   numberOfCities: number,
   searchTermLen: number,
 ) => {
+  'use cache';
   const cityLists = await Promise.all(
     new Array(numberOfCities).fill(undefined).map(() => {
       return request('https://geocoding-api.open-meteo.com/v1/search', {
