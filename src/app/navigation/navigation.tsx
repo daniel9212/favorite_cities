@@ -9,7 +9,7 @@ import UserSection from '@/app/navigation/user-section';
 export default async function Navigation() {
   return (
     <Box bg="gray.300">
-      <HStack as="nav" mx="auto" py="2.5" w="9/12" gap="6" top="0">
+      <HStack as="nav" mx="auto" py="2.5" w="10/12" gap="6" top="0">
         <Box mr="auto">Logo</Box>
         <NavButton text="Home" href="/" />
         <NavButton text="Search" href="/search" />
