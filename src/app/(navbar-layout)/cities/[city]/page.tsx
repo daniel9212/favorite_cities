@@ -1,15 +1,10 @@
 import { Box } from '@chakra-ui/react';
 
-import {
-  type SearchParamsProps,
-  getCityWeather,
-} from '@/app/api/cities/[city]/action';
-import { auth } from '@root/auth';
-import Header from '@/app/(navbar-layout)/cities/[city]/header';
+import { type SearchParamsProps } from '@/app/api/cities/[city]/action';
 import ReviewsSC from '@/app/(navbar-layout)/cities/[city]/reviews-sc';
-import WeatherCard from '@/app/(navbar-layout)/cities/[city]/weather-card';
+import CityDescription from '@/app/(navbar-layout)/cities/city-description';
 
-interface CityProps {
+export interface CityProps {
   params: Promise<{
     city: string;
   }>;
@@ -17,33 +12,17 @@ interface CityProps {
 }
 
 export default async function City({ params, searchParams }: CityProps) {
-  const session = await auth();
-
-  const { user: { id: userId } = {} } = session ?? {};
-
   const { city } = await params;
-  const cityName = decodeURI(city);
-
-  const { country, ...coordinates } = await searchParams;
 
   const cityData = {
-    name: cityName,
-    country,
-    ...coordinates,
+    name: decodeURI(city),
+    ...(await searchParams),
   };
-
-  const { data } = await getCityWeather(coordinates);
-
-  const { timezone, ...weatherData } = data;
-
   return (
     <>
-      <Box width="9/12" m="auto" py="10">
-        <Header userId={userId} timezone={timezone} cityData={cityData} />
-      </Box>
-      <WeatherCard weatherData={weatherData} />
-      <Box width="9/12" m="auto" mt="10">
-        <ReviewsSC user={session?.user} cityData={cityData} />
+      <CityDescription cityData={cityData} />
+      <Box width="10/12" m="auto" mt="10">
+        <ReviewsSC cityData={cityData} />
       </Box>
     </>
   );
