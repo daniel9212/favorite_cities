@@ -1,34 +1,16 @@
+import { Suspense } from 'react';
 import { Box, HStack, Text } from '@chakra-ui/react';
 
 import type { ClientCityType } from '@/app/types/city';
-import { checkIfFavoriteSelected } from '@/app/api/cities/[city]/action';
-import AddToFavoritesButton from '@/app/(navbar-layout)/cities/add-to-favorites-button';
+import AddToFavoritesButtonSC from '@/app/(navbar-layout)/cities/[city]/add-to-favorites-button-sc';
 
 interface HeaderProps {
-  userId?: string;
-  cityData: ClientCityType;
   timezone: string;
+  cityData: ClientCityType;
 }
 
-export default async function Header({
-  userId,
-  timezone,
-  cityData,
-}: HeaderProps) {
-  const { name, country, ...coordinates } = cityData;
-
-  let isSelected = false;
-
-  try {
-    if (userId) {
-      ({
-        data: { isSelected },
-      } = await checkIfFavoriteSelected({ userId, coordinates }));
-    }
-  } catch (error) {
-    console.error(error);
-  }
-
+export default async function Header({ timezone, cityData }: HeaderProps) {
+  const { name, country } = cityData;
   const cityTitle = `${name}, ${country}`;
   return (
     <HStack justifyContent="space-between">
@@ -46,13 +28,9 @@ export default async function Header({
           })}
         </Text>
       </Box>
-      {userId && (
-        <AddToFavoritesButton
-          defaultFavoriteSelected={isSelected}
-          userId={userId}
-          cityData={cityData}
-        />
-      )}
+      <Suspense fallback={null}>
+        <AddToFavoritesButtonSC cityData={cityData} />
+      </Suspense>
     </HStack>
   );
 }

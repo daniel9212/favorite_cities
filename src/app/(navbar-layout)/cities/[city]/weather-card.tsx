@@ -10,8 +10,8 @@ interface WeatherCardProps {
   };
 }
 
-export default function WeatherCard({ weatherData }: WeatherCardProps) {
-  const {
+export default function WeatherCard({
+  weatherData: {
     current: {
       temperature_2m,
       wind_speed_10m,
@@ -24,8 +24,8 @@ export default function WeatherCard({ weatherData }: WeatherCardProps) {
       precipitation_probability: precipitationUnit,
       wind_speed_10m: windSpeedUnit,
     },
-  } = weatherData;
-
+  },
+}: WeatherCardProps) {
   return (
     <Box
       bgImage={`url(${(is_day ? weatherDayBg : weatherNightBg).src})`}
